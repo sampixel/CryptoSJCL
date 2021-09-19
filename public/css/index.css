@@ -1,0 +1,70 @@
+:root {
+    --crypto-border-color: #2b2a2a;
+}
+
+body {
+    margin: 5px 50px;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Victor Mono";
+    background-color: #1d1d1d;
+    color: #fff;
+}
+
+div.data-type {
+    display: block;
+    margin-bottom: 5px;
+}
+
+span.type-title {
+    font-size: 15pt;
+    font-weight: bold;
+}
+
+span.type-item {
+    font-size: 8pt;
+    border: 1px solid var(--crypto-border-color);
+    border-radius: 5px;
+    padding: 3px 5px;
+}
+
+div.data-decryption {
+    display: flex;
+    justify-content: space-around;
+}
+
+div.decryption-ssl,
+div.decryption-sjcl {
+    position: relative;
+    width: calc(50% - 50px);
+    border: 1px solid var(--crypto-border-color);
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+div.php-crypto,
+div.js-crypto {
+    margin: 20px 0;
+    padding: 0 20px 20px 20px;
+    border: 1px solid var(--crypto-border-color);
+    border-radius: 20px;
+}
+
+div.data-code {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+div.inner-data {
+    margin: 20px 30px;
+}
+
+code {
+    background-color: #000;
+    border: 1px solid var(--crypto-border-color);
+    border-radius: 20px;
+    padding: 10px;
+    white-space: nowrap;
+    font-size: 12pt;
+}
