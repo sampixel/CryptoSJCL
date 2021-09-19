@@ -13,7 +13,7 @@
  * __base64_encode(openssl_random_pseudo_bytes(32));__
  * 
  * @see     https://bitwiseshiftleft.github.io/sjcl/
- * @package CryptoSJCL
+ * @package https://github.com/sampixel/CryptoSJCL.git
  * @author  Samuel Reka <rekasamuel0@gmail.com>
  */
 Class CryptoSJCL {
@@ -33,26 +33,40 @@ Class CryptoSJCL {
      * All available string keys
      */
     const OPENSSL_KEYS = [
-        "KALEIDO_LINKS" => [
+        "MY_PASSWD" => [
             "key" => "qDQMBZZTFRcdKfdBJ4PDemX16eBfGFgv129Tbgj0OA8=",
             "iv"  => "kWXxIYgFztUC7GQypVs3G4yX0TUm8ta5x9kmxWGJMWI="
         ],
     ];
 
     /**
-     * Extracts the cipher algorithm from the given param
+     * Returns the cipher algorithm from the given param
      *
      * @param string|object $algo The encryption algorithm
      * 
      * @return string The cipher string format
      */
-    public static function SSL_ExtractAlgo($algo) {
+    public static function SSL_ALGO($algo) {
         return (
             gettype($algo === "object") ?
             $algo["cipher"] . "-" . $algo["bytes"] . "-" . $algo["mode"] : (
                 !in_array($algo, openssl_get_cipher_methods()) ?
                 self::OPENSSL_ALGO : $algo
             )
+        );
+    }
+
+    /**
+     * Returns the hash value from the given param
+     * 
+     * @param string $hash The hash value
+     * 
+     * @return string The extracted hash value
+     */
+    public static function SSL_HASH($hash) {
+        return (
+            isset($hash) && in_array($hash, hash_algos($hash)) ?
+            $hash : self::OPENSSL_HASH
         );
     }
 
@@ -73,8 +87,8 @@ Class CryptoSJCL {
      * @return string The data string encrypted
      */
     public static function SSL_Encrypt($data, $algo, $key, $hash = null, $flag = 0) {
-        $algo  = CryptoSJCL::SSL_ExtractAlgo($algo);
-        $hash  = isset($hash) && in_array($hash, hash_algos($hash)) ? $hash : self::OPENSSL_HASH;
+        $algo  = CryptoSJCL::SSL_ALGO($algo);
+        $hash  = CryptoSJCL::SSL_HASH($hash);
         $key   = hash($hash, self::OPENSSL_KEYS[$key]["key"]);
         $flag  = $flag === 0 ? OPENSSL_RAW_DATA : OPENSSL_ZERO_PADDING;
         $iv    = substr(hash($hash, self::OPENSSL_KEYS[$key]["iv"]), 0, 16);
@@ -110,8 +124,8 @@ Class CryptoSJCL {
      * @return string|array|object The input string decrypted
      */
     public static function SSL_Decrypt($data, $algo, $key, $hash = null, $flag = 0, $json = false, $array = false) {
-        $algo  = CryptoSJCL::SSL_ExtractAlgo($algo);
-        $hash  = isset($hash) && in_array($hash, hash_algos($hash)) ? $hash : self::OPENSSL_HASH;
+        $algo  = CryptoSJCL::SSL_ALGO($algo);
+        $hash  = CryptoSJCL::SSL_HASH($hash);
         $key   = hash($hash, self::OPENSSL_KEYS[$key]["key"]);
         $flag  = $flag === 0 ? OPENSSL_RAW_DATA : OPENSSL_ZERO_PADDING;
         $iv    = substr(hash($hash, self::OPENSSL_KEYS[$key]["iv"]), 0, 16);
@@ -130,37 +144,25 @@ Class CryptoSJCL {
     /**
      * Decrypts a given string encrypted using sjcl
      * 
-     * @param string  $data  The encrypted object
-     * @param string  $key   The password key phrase
-     * @param boolean $json  The json flag
-     * @param boolean $array The array flag
+     * @param string  $data The encrypted object
+     * @param string  $pass The password string
+     * @param string  $hash The digest hash value
+     * @param boolean $flag The option bitwise value
      * 
      * @see https://www.php.net/manual/en/function.openssl-decrypt.php
      * 
      * @return string The input object decrypted
      */
-    public static function SJCL_Decrypt($data, $key, $hash = null, $json = false, $array = false) {
-        $algo  = CryptoSJCL::SSL_ExtractAlgo($algo);
-        $hash  = isset($hash) && in_array($hash, hash_algos($hash)) ? $hash : self::OPENSSL_HASH;
-        $key   = hash($hash, self::OPENSSL_KEYS[$key]["key"]);
-        $flag  = $flag === 0 ? OPENSSL_RAW_DATA : OPENSSL_ZERO_PADDING;
-        $iv    = substr(hash($hash, self::OPENSSL_KEYS[$key]["iv"]), 0, 16);
+    public static function SJCL_Decrypt($data, $pass, $hash = null, $flag = 0) {
+        $data = json_decode($data, true);
+        $hash = hash_pbkdf2(CryptoSJCL::SSL_HASH($hash), base64_decode($pass), base64_decode($data["salt"]), $data["iter"], 0, true);
+        $algo = $data["cipher"] . "-" . $data["ks"] . "-" . $data["mode"];
+        $key  = substr($data["ct"], 0, - $data["ts"] / 8);
+        $tag  = substr($data["ct"], - $data["ts"] / 8);
+        $iv   = $data["iv"];
+        $aad  = $data["adata"];
 
-
-        $algo  = $data["cipher"] . "-" . $data["ks"] . "-" . $data["mode"];
-
-
-
-        $data = substr(base64_decode($object["ct"]), 0, - $object["ts"] / 8);
-        $iv_aad = $object["adata"];
-        $iv_dec = base64_decode($object["iv"]);
-        $iv_tag = substr(base64_decode($object["ct"]), - $object["ts"] / 8);
-        $iv_key = base64_decode(hash_pbkdf2("sha256", $passwd, base64_decode($object["salt"]), $object["iter"], 0, true));
-
-        $ssl_decrypted = openssl_decrypt($data, $cipher, $iv_key, OPENSSL_RAW_DATA, $iv_dec, $iv_tag, $iv_aad);
-        $ssl_decrypted = $bool === true ? json_decode($ssl_decrypted, true) : $ssl_decrypted;
-
-        return $ssl_decrypted;
+        return base64_decode(openssl_decrypt($key, $algo, $hash, $flag, $iv, $tag, $aad));
     }
 
 }

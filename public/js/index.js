@@ -1,6 +1,6 @@
-var toEncrypt = "This is my secret key";
-var Encrypted = sjcl.encrypt("kalei.do.cookie", toEncrypt);
-var Decrypted = sjcl.decrypt("kalei.do.cookie", Encrypted);
+var toEncrypt = "This is my js secret key";
+var Encrypted = sjcl.encrypt("private_passwd", toEncrypt);
+var Decrypted = sjcl.decrypt("private_passwd", Encrypted);
 
 document.querySelector("code.js-data-encrypted").innerHTML = Encrypted;
 document.querySelector("code.js-data-decrypted").innerHTML = Decrypted;

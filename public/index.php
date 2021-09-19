@@ -1,8 +1,8 @@
 <?php
-
 require_once(__DIR__ . "/../CryptoSJCL.php");
 
-$toEncrypt = "This is my secret key";
+$phpEncryption = "This is my php secret key";
+$jsEncryption  = '{"iv":"UEuFKpWR5ConIFM+wckC1Q==","v":1,"iter":10000,"ks":128,"ts":64,"mode":"ccm","adata":"","cipher":"aes","salt":"tcOEKeJV0Yw=","ct":"So+ccaqkqZ0AlJIPmNrSqkomIPBljYcvyaoc//g="}';
 
 $SSL_ALGO = [
     "cipher" => "aes",
@@ -10,15 +10,9 @@ $SSL_ALGO = [
     "mode"   => "ctr"
 ];
 
-//$SSL_Encrypted = encrypt_decrypt("encrypt", $toEncrypt);
-//$SSL_Decrypted = encrypt_decrypt("decrypt", $SSL_Encrypted);
-
-$SSL_Encrypted = CryptoSJCL::SSL_Encrypt($toEncrypt, $SSL_ALGO, "KALEIDO_LINKS");
-$SSL_Decrypted = CryptoSJCL::SSL_Decrypt($SSL_Encrypted, $SSL_ALGO, "KALEIDO_LINKS");
-//$SJCL_Decrypted = CryptoSJCL::SJCL_Decrypt();
-
-//echo "Encrypted: " . $SSL_Encrypted . "<br />";
-//echo "Decrypted: " . $SSL_Decrypted . "<br />";
+$SSL_Encrypted  = CryptoSJCL::SSL_Encrypt($phpEncryption, $SSL_ALGO, "MY_PASSWD");
+$SSL_Decrypted  = CryptoSJCL::SSL_Decrypt($SSL_Encrypted, $SSL_ALGO, "MY_PASSWD");
+$SJCL_Decrypted = CryptoSJCL::SJCL_Decrypt($jsEncryption, "private_passwd");
 ?>
 <!DOCTYPE html>
 <html lang="en">
