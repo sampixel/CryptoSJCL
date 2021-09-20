@@ -168,4 +168,5 @@ Class CryptoSJCL {
 
         return openssl_decrypt($key, $algo, $hash, $flag, $iv, $tag, $aad);
     }
+
 }

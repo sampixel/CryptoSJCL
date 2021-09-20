@@ -1,5 +1,5 @@
 var toEncrypt = "This is my js secret key";
-var Encrypted = sjcl.encrypt("private_passwd", toEncrypt);
+var Encrypted = sjcl.encrypt("private_passwd", toEncrypt, {mode: "gcm", iv: sjcl.random.randomWords(4, 0)});
 var Decrypted = sjcl.decrypt("private_passwd", Encrypted);
 
 document.querySelector("code.js-data-encrypted").innerHTML = Encrypted;

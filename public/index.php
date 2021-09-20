@@ -2,7 +2,7 @@
 require_once(__DIR__ . "/../CryptoSJCL.php");
 
 $phpEncryption = "This is my php secret key";
-$jsEncryption  = '{"iv":"UEuFKpWR5ConIFM+wckC1Q==","v":1,"iter":10000,"ks":128,"ts":64,"mode":"ccm","adata":"","cipher":"aes","salt":"tcOEKeJV0Yw=","ct":"So+ccaqkqZ0AlJIPmNrSqkomIPBljYcvyaoc//g="}';
+$jsEncryption  = '{"iv":"wCwsBmPH9vKWbDiaKIH8LA==","v":1,"iter":10000,"ks":128,"ts":64,"mode":"gcm","adata":"","cipher":"aes","salt":"+nmM2V22tdw=","ct":"Hrtfrw9tCz8Kt0vt0MUA9upMe2gdMpsVgD+oewsTFIc="}';
 
 $SSL_ALGO = [
     "cipher" => "aes",
