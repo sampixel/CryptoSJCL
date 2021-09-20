@@ -10,8 +10,8 @@ $SSL_ALGO = [
     "mode"   => "ctr"
 ];
 
-$SSL_Encrypted  = CryptoSJCL::SSL_Encrypt($phpEncryption, $SSL_ALGO, "MY_PASSWD");
-$SSL_Decrypted  = CryptoSJCL::SSL_Decrypt($SSL_Encrypted, $SSL_ALGO, "MY_PASSWD");
+$SSL_Encrypted  = CryptoSJCL::SSL_Encrypt($phpEncryption, $SSL_ALGO, "MY_IDENTIFIER");
+$SSL_Decrypted  = CryptoSJCL::SSL_Decrypt($SSL_Encrypted, $SSL_ALGO, "MY_IDENTIFIER");
 $SJCL_Decrypted = CryptoSJCL::SJCL_Decrypt($jsEncryption, "private_passwd");
 ?>
 <!DOCTYPE html>
