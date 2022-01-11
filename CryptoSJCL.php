@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Utilities\Security;
-
 /**
  * Class CryptoSJCL
  * 
@@ -36,7 +34,7 @@ class CryptoSJCL {
      * All available string keys
      */
     const OPENSSL_KEYS = [
-        "PASSWORD" => [
+        "MY-IDENTIFIER" => [
             "key" => "qDQMBZZTFRcdKfdBJ4PDemX16eBfGFgv129Tbgj0OA8=",
             "iv" => "kWXxIYgFztUC7GQypVs3G4yX0TUm8ta5x9kmxWGJMWI="
         ],
@@ -163,7 +161,7 @@ class CryptoSJCL {
         $hash = hash_pbkdf2(self::SSL_HASH($hash), $pass, base64_decode($data["salt"]), $data["iter"], 0, true);
         $algo = $data["cipher"] . "-" . $data["ks"] . "-" . $data["mode"];
         $key  = substr(base64_decode($data["ct"]), 0, - $data["ts"] / 8);
-        $flag = $flag === 0 ? OPENSSL_RAW_DATA : OPENSSL_ZERO_PADDING;
+        $flag = $flag === 0 ? \OPENSSL_RAW_DATA : \OPENSSL_ZERO_PADDING;
         $tag  = substr(base64_decode($data["ct"]), - $data["ts"] / 8);
         $iv   = base64_decode($data["iv"]);
         $aad  = $data["adata"];

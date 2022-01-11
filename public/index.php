@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . "/../CryptoSJCL.php");
+require_once(dirname(__DIR__) . "/CryptoSJCL.php");
 
 $phpEncryption = "This is my php secret key";
 $jsEncryption  = '{"iv":"wCwsBmPH9vKWbDiaKIH8LA==","v":1,"iter":10000,"ks":128,"ts":64,"mode":"gcm","adata":"","cipher":"aes","salt":"+nmM2V22tdw=","ct":"Hrtfrw9tCz8Kt0vt0MUA9upMe2gdMpsVgD+oewsTFIc="}';
@@ -10,8 +10,8 @@ $SSL_ALGO = [
     "mode"   => "ctr"
 ];
 
-$SSL_Encrypted  = CryptoSJCL::SSL_Encrypt($phpEncryption, $SSL_ALGO, "MY_IDENTIFIER");
-$SSL_Decrypted  = CryptoSJCL::SSL_Decrypt($SSL_Encrypted, $SSL_ALGO, "MY_IDENTIFIER");
+$SSL_Encrypted  = CryptoSJCL::SSL_Encrypt($phpEncryption, "MY-IDENTIFIER", $SSL_ALGO);
+$SSL_Decrypted  = CryptoSJCL::SSL_Decrypt($SSL_Encrypted, "MY-IDENTIFIER", $SSL_ALGO);
 $SJCL_Decrypted = CryptoSJCL::SJCL_Decrypt($jsEncryption, "private_passwd");
 ?>
 <!DOCTYPE html>
